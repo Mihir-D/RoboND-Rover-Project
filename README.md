@@ -1,48 +1,112 @@
+## Project: Search and Sample Return
+
+---
+
+
+**The goals / steps of this project are the following:**  
+
 [//]: # (Image References)
-[image_0]: ./misc/rover_image.jpg
-# Search and Sample Return Project
-![alt text][image_0] 
 
-This project is modeled after the [NASA sample return challenge](https://www.nasa.gov/directorates/spacetech/centennial_challenges/sample_return_robot/index.html) and it will give you first hand experience with the three essential elements of robotics, which are perception, decision making and actuation.  You will carry out this project in a simulator environment built with the Unity game engine.  
+[image1]: ./misc/rover_image.jpg
+[image2]: ./calibration_images/example_grid1.jpg
+[image3]: ./calibration_images/example_rock1.jpg 
+[image4]: ./misc/left_wall_dist.png
+[image5]: ./misc/big_open_area.png
+[image6]: ./misc/missed_left_turn.png
+[image7]: ./misc/took_left_turn.png
+[image8]: ./misc/auto_mode_96_percent.png
+[video1]: ./output/test_mapping.mp4
 
-## The Simulator
-The first step is to download the simulator build that's appropriate for your operating system.  Here are the links for [Linux](https://s3-us-west-1.amazonaws.com/udacity-robotics/Rover+Unity+Sims/Linux_Roversim.zip), [Mac](	https://s3-us-west-1.amazonaws.com/udacity-robotics/Rover+Unity+Sims/Mac_Roversim.zip), or [Windows](https://s3-us-west-1.amazonaws.com/udacity-robotics/Rover+Unity+Sims/Windows_Roversim.zip).  
+## [Rubric](https://review.udacity.com/#!/rubrics/916/view) Points
+### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
 
-You can test out the simulator by opening it up and choosing "Training Mode".  Use the mouse or keyboard to navigate around the environment and see how it looks.
+---
+### Writeup / README
 
-## Dependencies
-You'll need Python 3 and Jupyter Notebooks installed to do this project.  The best way to get setup with these if you are not already is to use Anaconda following along with the [RoboND-Python-Starterkit](https://github.com/ryan-keenan/RoboND-Python-Starterkit). 
+#### 1. Provide a Writeup / README that includes all the rubric points and how you addressed each one.  You can submit your writeup as markdown or pdf.  
 
 
-Here is a great link for learning more about [Anaconda and Jupyter Notebooks](https://classroom.udacity.com/courses/ud1111)
+### Notebook Analysis
+#### 1. Run the functions provided in the notebook on test images (first with the test data provided, next on data you have recorded). Add/modify functions to allow for color selection of obstacles and rock samples.
+`a. For Obstacles:` I observed that whichever pixels were not part of the navigable terrain, are part of obstacles. Also, sample stones were detected as navigable terrain. So for detectin obstacles, I have simply used the negation of the condition used to identify navigable terrain pixels. Refer to function `rock_thresh()`.
 
-## Recording Data
-I've saved some test data for you in the folder called `test_dataset`.  In that folder you'll find a csv file with the output data for steering, throttle position etc. and the pathnames to the images recorded in each run.  I've also saved a few images in the folder called `calibration_images` to do some of the initial calibration steps with.  
+`b. For identifying sample rocks:` The rocks are yellow in color. I found that it is easier to threshold for colors in HSV format. I used the cv2 library. First I converted my image from RGB to BGR. Then I converted it to HSV format and applied thresholding. Refer to function `obstacle_thresh()`.
 
-The first step of this project is to record data on your own.  To do this, you should first create a new folder to store the image data in.  Then launch the simulator and choose "Training Mode" then hit "r".  Navigate to the directory you want to store data in, select it, and then drive around collecting data.  Hit "r" again to stop data collection.
 
-## Data Analysis
-Included in the IPython notebook called `Rover_Project_Test_Notebook.ipynb` are the functions from the lesson for performing the various steps of this project.  The notebook should function as is without need for modification at this point.  To see what's in the notebook and execute the code there, start the jupyter notebook server at the command line like this:
+#### 1. Populate the `process_image()` function with the appropriate analysis steps to map pixels identifying navigable terrain, obstacles and rock samples into a worldmap.  Run `process_image()` on your test data using the `moviepy` functions provided to create video output of your result. 
+1. Defined the source and destination points.
+2. Took a perspective transform of the input image.
+3. Applied 3 different thresholds to extract 3 b/w images of obstacles, rock samples and navigable terrain.
+4. Converted each of the valid pixels of above images to rover centric coordinates.
+5. Converted each of these 3 images' rover centric coordinates to real world coordinates with `pix_to_world()`.
+6. Updated world_map with red color for obstacle, green for rock sample and blue for navigable terrain.
+The video is at [this](./output/) location. "test_mapping.mp4" is with my data whereas the test_mapping1.mp4 is with the data previously provided.
 
-```sh
-jupyter notebook
-```
+### Autonomous Navigation and Mapping
 
-This command will bring up a browser window in the current directory where you can navigate to wherever `Rover_Project_Test_Notebook.ipynb` is and select it.  Run the cells in the notebook from top to bottom to see the various data analysis steps.  
+#### 1. Fill in the `perception_step()` (at the bottom of the `perception.py` script) and `decision_step()` (in `decision.py`) functions in the autonomous mapping scripts and an explanation is provided in the writeup of how and why these functions were modified as they were.
+**`1. Perception_step() Updates:`**
+The required functions as described in `process_image()` function in the Notebook were added. Accordingly, vision_image and world_map is updated. Additionally, distances and angles for Rover's obstacle pixels, rock sample pixels and navigable pixels were added. Obstacle distances are used in `decision.py`. In perception step, the scale in function pix_to_world(), which is currently 20, affects the fidelity significantly. When it was changed to 20 from 10, the fidelity increased to more than 70% from less than 40%.
 
-The last two cells in the notebook are for running the analysis on a folder of test images to create a map of the simulator environment and write the output to a video.  These cells should run as-is and save a video called `test_mapping.mp4` to the `output` folder.  This should give you an idea of how to go about modifying the `process_image()` function to perform mapping on your data.  
+**`2. decision_step() Updates:`**
+The rover keeps to the left side of the wall. If it is very close to the left wall, it turns slightly to right. If it is stuck and doesn't go to 'stop' mode, it turns right. The same loop repeats for each frame.
+Detailed description follows below:
+In forward mode, following functionalities were added:
+The rover should move close to left side of the wall. For this, average angle of navigable terrain to Rover's left, the left side obstacle distances (where obstacle_angle > 0) and the right side obstacle distances (where obstacle_angle < 0) are used.
+Next, the rover is preferred to go to left, hence in calculating Rover.steer from mean of navigable angles, 8 degrees are added to each angle so that the average inclination is a bit to left than the actual average navigable angles.
+Next, if right side obstacle is closer than left side obstacle and there is no immediate wall on left (checked through nav_left which is average angle of left side navigable pixels) then the rover turns left.
+Further if the nav_left is less than certain threshold (i.e. rover is very close to wall), the rover is turned right.
+In case the roll and pitch angles are out of certain limit, the rover is stopped and turned and enters into 'stop' mode.
+Also, if Rover velocity remains zero for more than one second, then Rover enters 'stuck' mode. In stuck mode, it takes a 4 wheel turn for some time period and then goes back to 'forward' mode.
+Sometimes when rover hits a rock, (somehow) it sees enough navigable points through the rock and never goes to 'stop' mode. It used to get stuck there. Also, in some small region in the map the rover doesn't go right even when it is stuck on the left wall.The above condition helps rover come out of these situations.
 
-## Navigating Autonomously
-The file called `drive_rover.py` is what you will use to navigate the environment in autonomous mode.  This script calls functions from within `perception.py` and `decision.py`.  The functions defined in the IPython notebook are all included in`perception.py` and it's your job to fill in the function called `perception_step()` with the appropriate processing steps and update the rover map. `decision.py` includes another function called `decision_step()`, which includes an example of a conditional statement you could use to navigate autonomously.  Here you should implement other conditionals to make driving decisions based on the rover's state and the results of the `perception_step()` analysis.
+Note: Some times the rover might cover the same path twice.
 
-`drive_rover.py` should work as is if you have all the required Python packages installed. Call it at the command line like this: 
+---
+#### 2. Launching in autonomous mode your rover can navigate and map autonomously.  Explain your results and how you might improve them in your writeup.  
 
-```sh
-python drive_rover.py
-```  
+**Note: running the simulator with different choices of resolution and graphics quality may produce different results, particularly on different machines!  Make a note of your simulator settings (resolution and graphics quality set on launch) and frames per second (FPS output to terminal by `drive_rover.py`) in your writeup when you submit the project so your reviewer can reproduce your results.**
 
-Then launch the simulator and choose "Autonomous Mode".  The rover should drive itself now!  It doesn't drive that well yet, but it's your job to make it better!  
+Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.
+`Environment details:`
+1. Resolution -------------------> 800 * 600
+2. Graphics quality -------------> Fantastic
+3. FPS o/p ----------------------> 5
 
-**Note: running the simulator with different choices of resolution and graphics quality may produce different results!  Make a note of your simulator settings in your writeup when you submit the project.**
+**Achievements:**
+
+1. The rover does a pretty well job in remaining close to left wall to detect objects. The below image is after taking a tricky left turn in the map
+
+![alt text][image7]
+
+2. It detects all the objects it encounters in its path.
+2. The rover can navigate more than 95% terrain for different starting positions.
+3. For coverage > 90%, I have managed fidelity more than 60%.
+
+![alt text][image8]
+
+**Scope for improvement:**
+
+1. In case of very large open area as shown below, it is misguided slightly. In another case as shown below, the rover keeps on hitting the left wall again and again. I think both the issues can be handled well by thresholding the distance of left side obstacle. Also, currently the obstacle pixels contain a wide range as shown below (most of the area which the rover doesn't actually see is mapped red). I should limit the pixels to only close to the rover. This will also improve the wall distance calculation accuracy (as currently there are lot of redundant pixels) and efficiency (higher efficiency if less pixels). See images below for elaboration.
+
+Below image shows large open area. The rover did not travel as close to walls as expected. This might be due to Right_wall_dist < left_wall_dist. Other reason is not known. Also see the bottom left corner image showing red and blue color. The red color is obstacle whereas blue color is naviagable pixels. 
+
+![alt text][image5] 
+
+In Image below, Rover should not have hit the wall by maintaining proper wall distance.
+
+![alt text][image4]
+
+2. I can optimize the if else conditions in decision.py forward mode. Currently, I am doing some unnecessary calculations which can be avoided if proper condition is put before.
+
+3. I can increase the maximum velocity of the rover. Currently, I have not implemented the algorithm to stick close to wall in all cases. Therefore, when I tried increasing velocity to 4, The rover missed some turns (especially when there was a rock on the way) which could not be seen through rover camera.
+
+4. I can add a code to pick up the rocks. I am working on it currently.
+
+5. I can add memory to rover so that it does not revisit the same path again.
+
+6. I can save the starting location in the memory and make the rover come back to original position once it has found and picked up all the rocks.
+
+7. I can make rover move smoother putting less harsh conditions on steer and left wall distance whenever possible. For example, if the right wall distance is more than a certain threshold, I can increase the distance from left wall and make the rover move straight for longer distances, thus increasing average speed.
 
 
