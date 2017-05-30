@@ -10,6 +10,11 @@
 [image1]: ./misc/rover_image.jpg
 [image2]: ./calibration_images/example_grid1.jpg
 [image3]: ./calibration_images/example_rock1.jpg 
+[image4]: ./misc/left_wall_dist
+[image5]: ./misc/big_open_area
+[image6]: ./misc/missed_left_turn
+[image7]: ./misc/took_left_turn
+[image8]: ./misc/auto_mode_96_percent
 [video1]: ./output/test_mapping.mp4
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/916/view) Points
@@ -27,7 +32,6 @@
 
 `b. For identifying sample rocks:` The rocks are yellow in color. I found that it is easier to threshold for colors in HSV format. I used the cv2 library. First I converted my image from RGB to BGR. Then I converted it to HSV format and applied thresholding. Refer to function **obstacle_thresh().
 
-![alt text][image1]
 
 #### 1. Populate the `process_image()` function with the appropriate analysis steps to map pixels identifying navigable terrain, obstacles and rock samples into a worldmap.  Run `process_image()` on your test data using the `moviepy` functions provided to create video output of your result. 
 1. Defined the source and destination points.
@@ -36,9 +40,8 @@
 4. Converted each of the valid pixels of above images to rover centric coordinates.
 5. Converted each of these 3 images' rover centric coordinates to real world coordinates with `pix_to_world()`.
 6. Updated world_map with red color for obstacle, green for rock sample and blue for navigable terrain.
-The video is at [this](./output/test_mapping.mp4) locations
+The video is at [this](./output/) location. "test_mapping.mp4" is with my data whereas the test_mapping1.mp4 is with the data previously provided.
 
-![alt text][image2]
 ### Autonomous Navigation and Mapping
 
 #### 1. Fill in the `perception_step()` (at the bottom of the `perception.py` script) and `decision_step()` (in `decision.py`) functions in the autonomous mapping scripts and an explanation is provided in the writeup of how and why these functions were modified as they were.
@@ -70,20 +73,24 @@ Here I'll talk about the approach I took, what techniques I used, what worked an
 
 **Achievements:
 
-1. The rover does a pretty well job in remaining close to left wall to detect objects. 
+1. The rover does a pretty well job in remaining close to left wall to detect objects. The below image is after taking a tricky left turn in the map
+
+![alt text][image7]
 2. It detects all the objects it encounters in its path.
 2. The rover can navigate more than 95% terrain for different starting positions.
 3. For coverage > 90%, I have managed fidelity more than 60%.
+
+![alt text][image8]
 **Scope for improvement:
 
 1. In case of very large open area as shown below, it is misguided slightly. In another case as shown below, the rover keeps on hitting the left wall again and again. I think both the issues can be handled well by thresholding the distance of left side obstacle. Also, currently the obstacle pixels contain a wide range as shown below (most of the area which the rover doesn't actually see is mapped red). I should limit the pixels to only close to the rover. This will also improve the wall distance calculation accuracy (as currently there are lot of redundant pixels) and efficiency (higher efficiency if less pixels).
+
+![alt text][image5] ![alt text][image4]
 2. I can optimize the if else conditions in decision.py forward mode. Currently, I am doing some unnecessary calculations which can be avoided if proper condition is put before.
-3. I can increase the maximum velocity of the rover. Currently, I have not implemented the algorithm to stick close to wall in all cases. Therefore, when I tried increasing velocity to 4, The rover missed some turns which could not be seen through rover camera.
+3. I can increase the maximum velocity of the rover. Currently, I have not implemented the algorithm to stick close to wall in all cases. Therefore, when I tried increasing velocity to 4, The rover missed some turns (especially when there was a rock on the way) which could not be seen through rover camera.
 4. I can add a code to pick up the rocks. I am working on it currently.
 5. I can add memory to rover so that it does not revisit the same path again.
 6. I can save the starting location in the memory and make the rover come back to original position once it has found and picked up all the rocks.
 7. I can make rover move smoother putting less harsh conditions on steer and left wall distance whenever possible. For example, if the right wall distance is more than a certain threshold, I can increase the distance from left wall and make the rover move straight for longer distances, thus increasing average speed.
-
-![alt text][image3]
 
 
