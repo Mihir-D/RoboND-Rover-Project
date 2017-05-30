@@ -36,6 +36,7 @@
 5. Converted each of these 3 images' rover centric coordinates to real world coordinates with `pix_to_world()`.
 6. Updated world_map with red color for obstacle, green for rock sample and blue for navigable terrain.
 The video is location at `put in the video location`
+
 ![alt text][image2]
 ### Autonomous Navigation and Mapping
 
@@ -52,7 +53,7 @@ Next, if right side obstacle is closer than left side obstacle and there is no i
 Further if the nav_left is less than certain threshold (i.e. rover is very close to wall), the rover is turned right.
 In case the roll and pitch angles are out of certain limit, the rover is stopped and turned and enters into 'stop' mode.
 Also, if Rover velocity remains zero for more than one second, then Rover enters 'stuck' mode. In stuck mode, it takes a 4 wheel turn for some time period and then goes back to 'forward' mode.
-Sometimes when rover hits a rock, (somehow) it sees enough navigable points through the rock and never goes to 'stop' mode. It kind of used to hang there. Also, in some small region in the map the rover doesn't go right even when it is stuck on the left wall.The above condition helps rover come out of these situations.
+Sometimes when rover hits a rock, (somehow) it sees enough navigable points through the rock and never goes to 'stop' mode. It used to get stuck there. Also, in some small region in the map the rover doesn't go right even when it is stuck on the left wall.The above condition helps rover come out of these situations.
 
 Note: Some times the rover might cover the same path twice.
 
@@ -66,7 +67,21 @@ Here I'll talk about the approach I took, what techniques I used, what worked an
 2. Graphics quality -------------> Fantastic
 3. FPS o/p ----------------------> 5
 
-The rover does a pretty well job in remaining close to left wall. Mainly, the rover can navigate more than 95% terrain every time.In case of very large open area as shown below, it is misguided slightly.
+**Achievements:
+
+1. The rover does a pretty well job in remaining close to left wall to detect objects. 
+2. It detects all the objects it encounters in its path.
+2. The rover can navigate more than 95% terrain for different starting positions.
+3. For coverage > 90%, I have managed fidelity more than 60%.
+**Scope for improvement:
+
+1. In case of very large open area as shown below, it is misguided slightly. In another case as shown below, the rover keeps on hitting the left wall again and again. I think both the issues can be handled well by thresholding the distance of left side obstacle. Also, currently the obstacle pixels contain a wide range as shown below (most of the area which the rover doesn't actually see is mapped red). I should limit the pixels to only close to the rover. This will also improve the wall distance calculation accuracy (as currently there are lot of redundant pixels) and efficiency (higher efficiency if less pixels).
+2. I can optimize the if else conditions in decision.py forward mode. Currently, I am doing some unnecessary calculations which can be avoided if proper condition is put before.
+3. I can increase the maximum velocity of the rover. Currently, I have not implemented the algorithm to stick close to wall in all cases. Therefore, when I tried increasing velocity to 4, The rover missed some turns which could not be seen through rover camera.
+4. I can add a code to pick up the rocks. I am working on it currently.
+5. I can add memory to rover so that it does not revisit the same path again.
+6. I can save the starting location in the memory and make the rover come back to original position once it has found and picked up all the rocks.
+7. I can make rover move smoother putting less harsh conditions on steer and left wall distance whenever possible. For example, if the right wall distance is more than a certain threshold, I can increase the distance from left wall and make the rover move straight for longer distances, thus increasing average speed.
 
 ![alt text][image3]
 
