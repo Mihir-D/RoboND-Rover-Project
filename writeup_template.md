@@ -93,7 +93,7 @@ Below image shows large open area. The rover did not travel as close to walls as
 
 ![alt text][image5] 
 
-In Image below, Rover should not have hit the wall by maintaining
+In Image below, Rover should not have hit the wall by maintaining proper wall distance.
 
 ![alt text][image4]
 
