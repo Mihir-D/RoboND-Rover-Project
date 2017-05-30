@@ -10,6 +10,7 @@
 [image1]: ./misc/rover_image.jpg
 [image2]: ./calibration_images/example_grid1.jpg
 [image3]: ./calibration_images/example_rock1.jpg 
+[video1]: ./output/test_mapping.mp4
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/916/view) Points
 ### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
@@ -35,7 +36,7 @@
 4. Converted each of the valid pixels of above images to rover centric coordinates.
 5. Converted each of these 3 images' rover centric coordinates to real world coordinates with `pix_to_world()`.
 6. Updated world_map with red color for obstacle, green for rock sample and blue for navigable terrain.
-The video is location at `put in the video location`
+The video is at [this](./output/test_mapping.mp4) locations
 
 ![alt text][image2]
 ### Autonomous Navigation and Mapping
