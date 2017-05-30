@@ -22,9 +22,10 @@
 
 ### Notebook Analysis
 #### 1. Run the functions provided in the notebook on test images (first with the test data provided, next on data you have recorded). Add/modify functions to allow for color selection of obstacles and rock samples.
-a. For Obstacles, I observed that whichever pixels were not part of the navigable terrain, are part of obstacles. Also, sample stones were detected as navigable terrain. So for detectin obstacles, I have simply used the negation of the condition used to identify navigable terrain pixels. Refer to function **rock_thresh().
+`a. For Obstacles:` I observed that whichever pixels were not part of the navigable terrain, are part of obstacles. Also, sample stones were detected as navigable terrain. So for detectin obstacles, I have simply used the negation of the condition used to identify navigable terrain pixels. Refer to function **rock_thresh().
 
-b. For identifying sample rocks: The rocks are yellow in color. I found that it is easier to threshold for colors in HSV format. I used the cv2 library. First I converted my image from RGB to BGR. Then I converted it to HSV format and applied thresholding. Refer to function **obstacle_thresh().
+`b. For identifying sample rocks:` The rocks are yellow in color. I found that it is easier to threshold for colors in HSV format. I used the cv2 library. First I converted my image from RGB to BGR. Then I converted it to HSV format and applied thresholding. Refer to function **obstacle_thresh().
+
 ![alt text][image1]
 
 #### 1. Populate the `process_image()` function with the appropriate analysis steps to map pixels identifying navigable terrain, obstacles and rock samples into a worldmap.  Run `process_image()` on your test data using the `moviepy` functions provided to create video output of your result. 
@@ -39,10 +40,10 @@ The video is location at `put in the video location`
 ### Autonomous Navigation and Mapping
 
 #### 1. Fill in the `perception_step()` (at the bottom of the `perception.py` script) and `decision_step()` (in `decision.py`) functions in the autonomous mapping scripts and an explanation is provided in the writeup of how and why these functions were modified as they were.
-1. Perception_step() Updates:
+`1. Perception_step() Updates:`
 The required functions as described in `process_image()` function in the Notebook were added. Accordingly, vision_image and world_map is updated. Additionally, distances and angles for Rover's obstacle pixels, rock sample pixels and navigable pixels were added. Obstacle distances are used in `decision.py`
-2. decision_step() Updates:
-In short, the rover keeps to the left side of the wall. If it is very close to the left wall, it turns slightly to right. If it is stuck and doesn't go to 'stop' mode, it turns right. The same loop repeats for each frame.
+`2. decision_step() Updates:`
+The rover keeps to the left side of the wall. If it is very close to the left wall, it turns slightly to right. If it is stuck and doesn't go to 'stop' mode, it turns right. The same loop repeats for each frame.
 Detailed description follows below:
 In forward mode, following functionalities were added:
 The rover should move close to left side of the wall. For this, average angle of navigable terrain to Rover's left, the left side obstacle distances (where obstacle_angle > 0) and the right side obstacle distances (where obstacle_angle < 0) are used.
@@ -59,9 +60,13 @@ Note: Some times the rover might cover the same path twice.
 
 **Note: running the simulator with different choices of resolution and graphics quality may produce different results, particularly on different machines!  Make a note of your simulator settings (resolution and graphics quality set on launch) and frames per second (FPS output to terminal by `drive_rover.py`) in your writeup when you submit the project so your reviewer can reproduce your results.**
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.
+`Environment details:`
+1. Resolution -------------------> 800 * 600
+2. Graphics quality -------------> Fantastic
+3. FPS o/p ----------------------> 5
 
-
+The rover does a pretty well job in remaining close to left wall. Mainly, the rover can navigate more than 95% terrain every time.In case of very large open area as shown below, it is misguided slightly.
 
 ![alt text][image3]
 
