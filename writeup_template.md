@@ -28,9 +28,9 @@
 
 ### Notebook Analysis
 #### 1. Run the functions provided in the notebook on test images (first with the test data provided, next on data you have recorded). Add/modify functions to allow for color selection of obstacles and rock samples.
-`a. For Obstacles:` I observed that whichever pixels were not part of the navigable terrain, are part of obstacles. Also, sample stones were detected as navigable terrain. So for detectin obstacles, I have simply used the negation of the condition used to identify navigable terrain pixels. Refer to function **rock_thresh().
+`a. For Obstacles:` I observed that whichever pixels were not part of the navigable terrain, are part of obstacles. Also, sample stones were detected as navigable terrain. So for detectin obstacles, I have simply used the negation of the condition used to identify navigable terrain pixels. Refer to function `rock_thresh()`.
 
-`b. For identifying sample rocks:` The rocks are yellow in color. I found that it is easier to threshold for colors in HSV format. I used the cv2 library. First I converted my image from RGB to BGR. Then I converted it to HSV format and applied thresholding. Refer to function **obstacle_thresh().
+`b. For identifying sample rocks:` The rocks are yellow in color. I found that it is easier to threshold for colors in HSV format. I used the cv2 library. First I converted my image from RGB to BGR. Then I converted it to HSV format and applied thresholding. Refer to function `obstacle_thresh()`.
 
 
 #### 1. Populate the `process_image()` function with the appropriate analysis steps to map pixels identifying navigable terrain, obstacles and rock samples into a worldmap.  Run `process_image()` on your test data using the `moviepy` functions provided to create video output of your result. 
@@ -61,6 +61,7 @@ Sometimes when rover hits a rock, (somehow) it sees enough navigable points thro
 
 Note: Some times the rover might cover the same path twice.
 
+---
 #### 2. Launching in autonomous mode your rover can navigate and map autonomously.  Explain your results and how you might improve them in your writeup.  
 
 **Note: running the simulator with different choices of resolution and graphics quality may produce different results, particularly on different machines!  Make a note of your simulator settings (resolution and graphics quality set on launch) and frames per second (FPS output to terminal by `drive_rover.py`) in your writeup when you submit the project so your reviewer can reproduce your results.**
@@ -71,7 +72,7 @@ Here I'll talk about the approach I took, what techniques I used, what worked an
 2. Graphics quality -------------> Fantastic
 3. FPS o/p ----------------------> 5
 
-**Achievements:
+####Achievements:
 
 1. The rover does a pretty well job in remaining close to left wall to detect objects. The below image is after taking a tricky left turn in the map
 
@@ -81,7 +82,8 @@ Here I'll talk about the approach I took, what techniques I used, what worked an
 3. For coverage > 90%, I have managed fidelity more than 60%.
 
 ![alt text][image8]
-**Scope for improvement:
+
+####Scope for improvement:
 
 1. In case of very large open area as shown below, it is misguided slightly. In another case as shown below, the rover keeps on hitting the left wall again and again. I think both the issues can be handled well by thresholding the distance of left side obstacle. Also, currently the obstacle pixels contain a wide range as shown below (most of the area which the rover doesn't actually see is mapped red). I should limit the pixels to only close to the rover. This will also improve the wall distance calculation accuracy (as currently there are lot of redundant pixels) and efficiency (higher efficiency if less pixels).
 
