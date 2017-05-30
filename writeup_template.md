@@ -10,11 +10,11 @@
 [image1]: ./misc/rover_image.jpg
 [image2]: ./calibration_images/example_grid1.jpg
 [image3]: ./calibration_images/example_rock1.jpg 
-[image4]: ./misc/left_wall_dist
-[image5]: ./misc/big_open_area
-[image6]: ./misc/missed_left_turn
-[image7]: ./misc/took_left_turn
-[image8]: ./misc/auto_mode_96_percent
+[image4]: ./misc/left_wall_dist.png
+[image5]: ./misc/big_open_area.png
+[image6]: ./misc/missed_left_turn.png
+[image7]: ./misc/took_left_turn.png
+[image8]: ./misc/auto_mode_96_percent.png
 [video1]: ./output/test_mapping.mp4
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/916/view) Points
