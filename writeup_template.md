@@ -47,6 +47,7 @@ The video is at [this](./output/) location. "test_mapping.mp4" is with my data w
 #### 1. Fill in the `perception_step()` (at the bottom of the `perception.py` script) and `decision_step()` (in `decision.py`) functions in the autonomous mapping scripts and an explanation is provided in the writeup of how and why these functions were modified as they were.
 `1. Perception_step() Updates:`
 The required functions as described in `process_image()` function in the Notebook were added. Accordingly, vision_image and world_map is updated. Additionally, distances and angles for Rover's obstacle pixels, rock sample pixels and navigable pixels were added. Obstacle distances are used in `decision.py`. In perception step, the scale in function pix_to_world(), which is currently 20, affects the fidelity significantly. When it was changed to 20 from 10, the fidelity increased to more than 70% from less than 40%.
+
 `2. decision_step() Updates:`
 The rover keeps to the left side of the wall. If it is very close to the left wall, it turns slightly to right. If it is stuck and doesn't go to 'stop' mode, it turns right. The same loop repeats for each frame.
 Detailed description follows below:
@@ -92,12 +93,19 @@ Below image shows large open area. The rover did not travel as close to walls as
 ![alt text][image5] 
 
 In Image below, Rover should not have hit the wall by maintaining
+
 ![alt text][image4]
+
 2. I can optimize the if else conditions in decision.py forward mode. Currently, I am doing some unnecessary calculations which can be avoided if proper condition is put before.
+
 3. I can increase the maximum velocity of the rover. Currently, I have not implemented the algorithm to stick close to wall in all cases. Therefore, when I tried increasing velocity to 4, The rover missed some turns (especially when there was a rock on the way) which could not be seen through rover camera.
+
 4. I can add a code to pick up the rocks. I am working on it currently.
+
 5. I can add memory to rover so that it does not revisit the same path again.
+
 6. I can save the starting location in the memory and make the rover come back to original position once it has found and picked up all the rocks.
+
 7. I can make rover move smoother putting less harsh conditions on steer and left wall distance whenever possible. For example, if the right wall distance is more than a certain threshold, I can increase the distance from left wall and make the rover move straight for longer distances, thus increasing average speed.
 
 
