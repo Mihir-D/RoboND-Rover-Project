@@ -45,10 +45,10 @@ The video is at [this](./output/) location. "test_mapping.mp4" is with my data w
 ### Autonomous Navigation and Mapping
 
 #### 1. Fill in the `perception_step()` (at the bottom of the `perception.py` script) and `decision_step()` (in `decision.py`) functions in the autonomous mapping scripts and an explanation is provided in the writeup of how and why these functions were modified as they were.
-`1. Perception_step() Updates:`
+**`1. Perception_step() Updates:`**
 The required functions as described in `process_image()` function in the Notebook were added. Accordingly, vision_image and world_map is updated. Additionally, distances and angles for Rover's obstacle pixels, rock sample pixels and navigable pixels were added. Obstacle distances are used in `decision.py`. In perception step, the scale in function pix_to_world(), which is currently 20, affects the fidelity significantly. When it was changed to 20 from 10, the fidelity increased to more than 70% from less than 40%.
 
-`2. decision_step() Updates:`
+**`2. decision_step() Updates:`**
 The rover keeps to the left side of the wall. If it is very close to the left wall, it turns slightly to right. If it is stuck and doesn't go to 'stop' mode, it turns right. The same loop repeats for each frame.
 Detailed description follows below:
 In forward mode, following functionalities were added:
@@ -73,18 +73,19 @@ Here I'll talk about the approach I took, what techniques I used, what worked an
 2. Graphics quality -------------> Fantastic
 3. FPS o/p ----------------------> 5
 
-####Achievements:
+**Achievements:**
 
 1. The rover does a pretty well job in remaining close to left wall to detect objects. The below image is after taking a tricky left turn in the map
 
 ![alt text][image7]
+
 2. It detects all the objects it encounters in its path.
 2. The rover can navigate more than 95% terrain for different starting positions.
 3. For coverage > 90%, I have managed fidelity more than 60%.
 
 ![alt text][image8]
 
-####Scope for improvement:
+**Scope for improvement:**
 
 1. In case of very large open area as shown below, it is misguided slightly. In another case as shown below, the rover keeps on hitting the left wall again and again. I think both the issues can be handled well by thresholding the distance of left side obstacle. Also, currently the obstacle pixels contain a wide range as shown below (most of the area which the rover doesn't actually see is mapped red). I should limit the pixels to only close to the rover. This will also improve the wall distance calculation accuracy (as currently there are lot of redundant pixels) and efficiency (higher efficiency if less pixels). See images below for elaboration.
 
