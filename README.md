@@ -1,4 +1,4 @@
-# For my contribution, Please refer to `writeup.template` 
+# For my project work description, Please refer to `writeup.template` 
 
 
 ## Project: Search and Sample Return
